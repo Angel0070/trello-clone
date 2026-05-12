@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -27,8 +28,12 @@ jobs:
           npm ci
           npm run build
       
-      - name: Setup 404 for SPA
-        run: cp frontend/dist/index.html frontend/dist/404.html
+      - name: Fix paths for GitHub Pages
+        working-directory: frontend
+        run: |
+          cp dist/index.html dist/404.html
+          sed -i 's/=\/assets/=.\/assets/g' dist/index.html
+          sed -i 's/=\/assets/=.\/assets/g' dist/404.html
       
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
